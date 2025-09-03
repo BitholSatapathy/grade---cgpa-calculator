@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semester Marks & GPA Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+  <h1>Semester Marks & GPA Calculator</h1>
+  <button id="finalGradeBtn" style="position:absolute;top:24px;right:32px;padding:2px 10px;font-size:12px;border-radius:4px;background:#3a3af6;color:#fff;border:none;cursor:pointer;z-index:1100;min-width:44px;max-width:60px;box-shadow:0 2px 8px rgba(0,0,0,0.12);">Grade</button>
+
+  <div id="finalGradeModal" class="modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(10,10,20,0.95);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#181828;padding:40px 48px;border-radius:16px;max-width:600px;width:96vw;margin:auto;box-shadow:0 2px 32px rgba(0,0,0,0.35);color:#fff;">
+      <h2 style="margin-top:0;margin-bottom:24px;text-align:center;font-size:2rem;letter-spacing:1px;">Final Grade Calculator</h2>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:20px;">
+        <input type="text" id="fgSubjectName" placeholder="Subject Name" style="flex:2;min-width:120px;padding:10px 12px;border-radius:6px;border:none;background:#22223a;color:#fff;font-size:1rem;">
+        <input type="number" id="fgSubjectCredits" placeholder="Credits" style="width:90px;padding:10px 12px;border-radius:6px;border:none;background:#22223a;color:#fff;font-size:1rem;">
+        <select id="fgSubjectGrade" style="width:90px;padding:10px 12px;border-radius:6px;border:none;background:#22223a;color:#fff;font-size:1rem;">
+          <option value="S">S</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="E">E</option>
+          <option value="F">F</option>
+        </select>
+        <button onclick="addFGSubject()" style="padding:10px 18px;background:#3a3af6;color:#fff;border:none;border-radius:6px;font-size:1rem;cursor:pointer;">Add Subject</button>
+      </div>
+      <table id="fgSummaryTable" style="width:100%;border-collapse:collapse;margin-bottom:20px;background:#22223a;border-radius:8px;overflow:hidden;">
+        <thead>
+          <tr style="background:#23234a;color:#fff;">
+            <th style="padding:12px;border:1px solid #333;font-size:1rem;">Subject</th>
+            <th style="padding:12px;border:1px solid #333;font-size:1rem;">Credits</th>
+            <th style="padding:12px;border:1px solid #333;font-size:1rem;">Grade</th>
+            <th style="padding:12px;border:1px solid #333;font-size:1rem;">Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="calculateFGGPA()" style="width:100%;margin-bottom:16px;padding:12px 0;background:#3a3af6;color:#fff;border:none;border-radius:6px;font-size:1.1rem;cursor:pointer;">Calculate GPA</button>
+      <div id="fgResult" style="margin-bottom:16px;text-align:center;font-size:1.2rem;"></div>
+      <button onclick="closeFinalGradeModal()" style="width:100%;padding:12px 0;background:#23234a;color:#fff;border:none;border-radius:6px;font-size:1rem;cursor:pointer;">Close</button>
+    </div>
+  </div>
+
+  <div class="container" style="width:75vw;max-width:1100px;min-height:600px;margin:32px auto 0 auto;padding:48px 60px 48px 36px;background:#22223a;border-radius:20px;box-shadow:0 4px 40px rgba(0,0,0,0.30);box-sizing:border-box;overflow:hidden;">
+    <input type="text" id="semesterName" placeholder="Enter Semester Name" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;margin-bottom:16px;">
+
+    <h3 style="margin-bottom:12px;">Add Subject</h3>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;width:100%;box-sizing:border-box;">
+      <input type="text" id="subjectName" placeholder="Subject Name" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+      <input type="number" id="midterm" placeholder="Midterm (out of 50)" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+      <input type="number" id="internal" placeholder="Internal (out of 35)" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+      <input type="number" id="attendance" placeholder="Attendance %" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+      <input type="number" id="endterm" placeholder="End-term (out of 100)" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+      <input type="number" id="average" placeholder="Class Average" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+      <input type="number" id="credits" placeholder="Credits" style="width:100%;padding:10px 12px;border-radius:6px;border:none;background:#23234a;color:#fff;font-size:1rem;">
+  <button onclick="addSubject()" style="display:block;width:25%;min-width:160px;max-width:300px;margin:0 auto;padding:12px 0;background:#3a3af6;color:#fff;border:none;border-radius:6px;font-size:1.1rem;cursor:pointer;">Add Subject</button>
+    </div>
+  </div>
+
+  <h3>Subjects Summary</h3>
+  <table id="summaryTable">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Midterm</th>
+        <th>Internal</th>
+        <th>Attendance</th>
+        <th>Endterm</th>
+        <th>Final Marks</th>
+        <th>Grade</th>
+        <th>Credits</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="gpaContainer">
+    <h3>GPA: <span id="gpaValue">0.00</span></h3>
+  </div>
+
+
+  <button onclick="downloadPDF()" style="display:block;width:25%;min-width:160px;max-width:300px;margin:24px auto 0 auto;padding:12px 0;background:#3a3af6;color:#fff;border:none;border-radius:6px;font-size:1.1rem;cursor:pointer;">Download PDF</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
